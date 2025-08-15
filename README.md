@@ -1,38 +1,37 @@
-# sqlite_bonobo_dbt_postgres
+<h1>Projeto: SQLite → Postgres (raw) → dbt (silver/gold) → Power BI usando Bonobo</h1>
 
+<p>Este projeto implementa um pipeline <strong>ETL sem Docker</strong> para extração, carga, transformação e visualização de dados.</p>
 
-# Projeto: SQLite → Postgres (raw) → dbt (silver/gold) → Power BI usando Bonobo
+<h2>🎯 Objetivo</h2>
+<ul>
+  <li><strong>Extrair</strong> dados de um banco <strong>SQLite</strong>.</li>
+  <li><strong>Carregar</strong> os dados no <strong>Postgres</strong>, na camada <code>raw</code>.</li>
+  <li><strong>Transformar</strong> os dados com <strong>dbt</strong> nas camadas <code>silver</code> e <code>gold</code>.</li>
+  <li><strong>Consumir</strong> os dados no <strong>Power BI</strong>.</li>
+</ul>
 
-Este projeto implementa um pipeline **ETL sem Docker** para extração, carga, transformação e visualização de dados.  
-O objetivo é:
+<h2>🚀 Fluxo Geral</h2>
+<h3>Bonobo (Python)</h3>
+<ul>
+  <li>Conecta no SQLite.</li>
+  <li>Lê todas as tabelas.</li>
+  <li>Carrega no Postgres (schema <code>raw</code>).</li>
+</ul>
 
-1. **Extrair** dados de um banco **SQLite**.
-2. **Carregar** os dados no **Postgres**, na camada **raw**.
-3. **Transformar** os dados com **dbt** nas camadas **silver** (limpeza/tipagem) e **gold** (modelos prontos para BI).
-4. **Consumir** os dados no **Power BI**.
+<h3>dbt</h3>
+<ul>
+  <li>Usa os dados do schema <code>raw</code> como source.</li>
+  <li>Cria tabelas limpas e tipadas na camada <code>silver</code>.</li>
+  <li>Gera dimensões, fatos e métricas na camada <code>gold</code>.</li>
+</ul>
 
----
+<h3>Power BI</h3>
+<ul>
+  <li>Conecta na camada <code>gold</code> do Postgres.</li>
+  <li>Monta dashboards e relatórios.</li>
+</ul>
 
-## 🚀 Fluxo Geral
-
-1. **Bonobo (Python)**  
-   - Conecta no SQLite.
-   - Lê todas as tabelas.
-   - Carrega no Postgres (schema `raw`).
-   
-2. **dbt**  
-   - Usa os dados do schema `raw` como **source**.
-   - Cria tabelas limpas e tipadas na camada `silver`.
-   - Gera dimensões, fatos e métricas na camada `gold`.
-
-3. **Power BI**  
-   - Conecta na camada `gold` do Postgres.
-   - Monta dashboards e relatórios.
-
----
-
-## 📂 Estrutura do Projeto
-
+<h2>📂 Estrutura do Projeto</h2>
 <pre>
 sqlite-to-postgres-bonobo-dbt/
   data/
@@ -48,64 +47,33 @@ sqlite-to-postgres-bonobo-dbt/
   README.md                  # Documentação do projeto
 </pre>
 
+<h2>🛠 Tecnologias Utilizadas</h2>
+<ul>
+  <li>SQLite → Fonte de dados.</li>
+  <li>Python + Bonobo → Orquestração e carga para Postgres.</li>
+  <li>SQLAlchemy → Conexão com bancos.</li>
+  <li>Pandas → Manipulação de dados durante o ETL.</li>
+  <li>Postgres → Armazenamento nas camadas raw, silver, gold.</li>
+  <li>dbt-core → Transformações de dados.</li>
+  <li>Power BI → Visualização de dados.</li>
+</ul>
 
+<h2>⚙️ Configuração do Ambiente</h2>
+<h3>Pré-requisitos</h3>
+<ul>
+  <li>Python 3.8+</li>
+  <li>Postgres instalado e rodando</li>
+  <li>dbt-core e dbt-postgres instalados</li>
+</ul>
 
----
+<h3>Instalação dos pacotes</h3>
+<pre>
+pip install bonobo pandas sqlalchemy psycopg2-binary python-dotenv
+pip install dbt-core dbt-postgres
+</pre>
 
-## 🛠 Tecnologias Utilizadas
-
-- **SQLite** → Fonte de dados.
-- **Python + Bonobo** → Orquestração e carga para Postgres.
-- **SQLAlchemy** → Conexão com bancos.
-- **Pandas** → Manipulação de dados durante o ETL.
-- **Postgres** → Armazenamento nas camadas `raw`, `silver`, `gold`.
-- **dbt-core** → Transformações de dados.
-- **Power BI** → Visualização de dados.
-
----
-
-## ⚙️ Configuração do Ambiente
-
-1. **Pré-requisitos**
-   - Python 3.8+
-   - Postgres instalado e rodando🔄 Execução do Pipeline
-
-Coloque o arquivo basketball.sqlite na pasta data/.
-
-Crie os schemas no Postgres:
-
-CREATE SCHEMA IF NOT EXISTS raw;
-CREATE SCHEMA IF NOT EXISTS silver;
-CREATE SCHEMA IF NOT EXISTS gold;
-
-
-Execute o ETL com:
-
-python run.py
-
-
-Rode as transformações no dbt:
-
-dbt run --profiles-dir profiles
-
-📊 Estrutura das Camadas
-
-raw → Dados brutos, extraídos diretamente do SQLite.
-
-silver → Dados limpos e tipados, prontos para análise.
-
-gold → Métricas e agregações otimizadas para BI.
-   - dbt-core e dbt-postgres instalados
-
-2. **Instalação dos pacotes**
-   ```bash
-   pip install bonobo pandas sqlalchemy psycopg2-binary python-dotenv
-   pip install dbt-core dbt-postgres
-
-
-
-   Configuração do .env
-
+<h3>Configuração do .env</h3>
+<pre>
 SQLITE_PATH=./data/basketball.sqlite
 PG_HOST=localhost
 PG_PORT=5432
@@ -113,4 +81,34 @@ PG_DB=basketball
 PG_USER=postgres
 PG_PASSWORD=postgres
 PG_SCHEMA_RAW=raw
+</pre>
 
+<h2>🔄 Execução do Pipeline</h2>
+<ol>
+  <li>Coloque o arquivo <code>basketball.sqlite</code> na pasta <code>data/</code>.</li>
+  <li>Crie os schemas no Postgres:</li>
+</ol>
+<pre>
+CREATE SCHEMA IF NOT EXISTS raw;
+CREATE SCHEMA IF NOT EXISTS silver;
+CREATE SCHEMA IF NOT EXISTS gold;
+</pre>
+<ol start="3">
+  <li>Execute o ETL:</li>
+</ol>
+<pre>
+python run.py
+</pre>
+<ol start="4">
+  <li>Rode as transformações no dbt:</li>
+</ol>
+<pre>
+dbt run --profiles-dir profiles
+</pre>
+
+<h2>📊 Estrutura das Camadas</h2>
+<ul>
+  <li>raw → Dados brutos, extraídos diretamente do SQLite.</li>
+  <li>silver → Dados limpos e tipados, prontos para análise.</li>
+  <li>gold → Métricas e agregações otimizadas para BI.</li>
+</ul>
